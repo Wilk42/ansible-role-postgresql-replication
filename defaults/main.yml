@@ -11,11 +11,11 @@ postgresrep_wal_keep_segments: 100
 postgresrep_synchronous_commit: local
 postgresrep_application_name: awx
 
-postgresrep_group_name: database_slave
-postgresrep_group_name_master: database
+postgresrep_group_name: database_standby
+postgresrep_group_name_primary: database_primary
 
-postgresrep_master_address: "{{ hostvars[groups[postgresrep_group_name_master][0]].ansible_default_ipv4.address }}"
-postgresrep_slave_address: "{{ hostvars[groups[postgresrep_group_name][0]].ansible_default_ipv4.address }}"
+postgresrep_primary_address: "{{ hostvars[groups[postgresrep_group_name_primary][0]].ansible_default_ipv4.address }}"
+postgresrep_standby_address: "{{ hostvars[groups[postgresrep_group_name][0]].ansible_default_ipv4.address }}"
 
 postgresrep_postgres_conf_lines:
   - regexp: '#?wal_level = \w+(\s+#.*)'
@@ -35,4 +35,4 @@ postgresrep_postgres_conf_lines:
 
 postgresrep_pg_hba_conf_lines:
   - regexp: 'host.*replication.*/32.*trust'
-    line: 'host    replication    replicator  {{ postgresrep_slave_address }}/32 trust'
+    line: 'host    replication    replicator  {{ postgresrep_standby_address }}/32 trust'

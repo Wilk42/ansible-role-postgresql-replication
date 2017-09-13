@@ -1,4 +1,4 @@
-- name: Configure master server
+- name: Configure primary server
   lineinfile:
     state: present
     backrefs: yes

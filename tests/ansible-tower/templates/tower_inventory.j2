@@ -4,11 +4,11 @@
 {% endfor %}
 
 
-[database]
-db-master ansible_host={{ hostvars[groups['database'][0]].ansible_all_ipv4_addresses[-1] }} postgresrep_role=master
+[database_primary]
+db-primary ansible_host={{ hostvars[groups['database'][0]].ansible_all_ipv4_addresses[-1] }} postgresrep_role=primary
 
-[database_slave]
-db-slave ansible_host={{ hostvars[groups['database_slave'][0]].ansible_all_ipv4_addresses[-1] }} postgresrep_role=slave
+[database_standby]
+db-standby ansible_host={{ hostvars[groups['database_standby'][0]].ansible_all_ipv4_addresses[-1] }} postgresrep_role=standby
 
 [all:vars]
 ansible_user=vagrant
