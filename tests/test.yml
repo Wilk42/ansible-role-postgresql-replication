@@ -1,0 +1,14 @@
+---
+- hosts: towers
+  remote_user: root
+  any_errors_fatal: true
+  gather_facts: False
+  roles:
+    - tower-dr_role
+
+- hosts: databases
+  become: yes
+  roles:
+    #- postgres_fail_over_role
+    - ansible-role-postgresql-replication
+...

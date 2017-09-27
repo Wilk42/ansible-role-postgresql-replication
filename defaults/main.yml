@@ -17,6 +17,15 @@ postgresrep_group_name_primary: database_primary
 postgresrep_primary_address: "{{ hostvars[groups[postgresrep_group_name_primary][0]].ansible_default_ipv4.address }}"
 postgresrep_standby_address: "{{ hostvars[groups[postgresrep_group_name][0]].ansible_default_ipv4.address }}"
 
+#postgress default directories and files
+postgresrep_conf: /var/lib/pgsql/9.4/data/postgresql.conf
+postgresrep_pg_ctl: /usr/pgsql-9.4/bin/pg_ctl
+postgresrep_PGDATA: /var/lib/pgsql/9.4/data
+postgresrep_hba_conf: /var/lib/pgsql/9.4/data/pg_hba.conf
+
+#Standby Server
+postgresrep_recovery_conf: /var/lib/pgsql/9.4/data/recovery.conf
+
 postgresrep_postgres_conf_lines:
   - regexp: '#?wal_level = \w+(\s+#.*)'
     line: 'wal_level = {{ postgresrep_wal_level }}\1'

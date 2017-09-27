@@ -1,8 +1,26 @@
+- name: Disable hot standby
+  lineinfile:
+    state: present
+    backup: yes
+    dest: {{ postgresrep_conf }}
+    regexp: '^#?hot_standby = \w+(\s+#.*)'
+    line: 'hot_standby = off\1'
+    backrefs: yes
+  become: yes
+  become_user: postgres
+
+- name: Promote "{{ inventory_hostname }}" PostgreSQL server to primary
+  command: {{ postgresrep_pg_ctl }} promote
+  become_user: postgres
+  environment:
+    PGDATA: {{ postgresrep_PGDATA }}
+  ignore_errors: yes
+
 - name: Configure primary server
   lineinfile:
     state: present
     backrefs: yes
-    dest: /var/lib/pgsql/9.4/data/postgresql.conf
+    dest: {{ postgresrep_conf }}
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items: "{{ postgresrep_postgres_conf_lines }}"
@@ -19,8 +37,13 @@
 - name: Add trust in pg_hba.conf
   lineinfile:
     state: present
-    dest: /var/lib/pgsql/9.4/data/pg_hba.conf
+    dest: {{ postgresrep_hba_conf }}
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items: "{{ postgresrep_pg_hba_conf_lines }}"
   notify: restart postgresql
+
+- name: restart postgresql
+  service:
+    name: postgresql-9.4
+    state: restarted
